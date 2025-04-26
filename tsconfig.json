@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "module": "node16",
+    "target": "ES2023",
+    "allowJs": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node16",
+    "importHelpers": true,
+    "isolatedModules": true,
+    "strictNullChecks": true,
+    "lib": [
+      "DOM",
+      "ES5",
+      "ES6",
+      "ES7",
+      "ES2023"
+    ]
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

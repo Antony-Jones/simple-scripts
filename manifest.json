@@ -1,0 +1,11 @@
+{
+	"id": "simple-scripts",
+	"name": "Simple Scripts",
+	"version": "0.1.0",
+	"minAppVersion": "1.8.7",
+	"description": "Expand Obsidian with custom JS without needing to develop a custom plugin.",
+	"author": "Tony Jones",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}

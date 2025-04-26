@@ -1,0 +1,28 @@
+.simple-script-notice{
+	white-space: normal;
+	width: 200px;
+}
+.simple-script-notice-header{
+	color: var(--text-error);
+    font-size: var(--font-ui-medium);
+    line-height: var(--line-height-tight);
+}
+.simple-script-notice-subheader{
+    color: var(--text-normal);
+    font-size: var(--font-ui-small);
+    line-height: var(--line-height-tight);
+    padding-left: var(--size-4-2);
+    user-select: none;
+}
+.simple-script-notice-filename{
+	font-size: var(--font-ui-smaller);
+    color: var(--text-faint);
+    font-weight: var(--font-semibold);
+    padding-left: var(--size-4-2);
+    user-select: none;
+}
+.simple-script-notice-message{
+    padding: var(--size-4-2);
+	color: var(--text-muted);
+    font-size: var(--font-ui-small);
+}
