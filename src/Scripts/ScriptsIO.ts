@@ -1,5 +1,9 @@
 import { FileSystemAdapter, ListedFiles, normalizePath, Plugin } from 'obsidian';
 
+declare global{
+	const simpleScriptApiTypes:string;
+}
+
 export default class ScriptsIO {
 	readonly #scriptsPath = ".obsidian\\scripts";
 	readonly #plugin: Plugin;
@@ -34,7 +38,7 @@ export default class ScriptsIO {
 
 		return dir.files
 			.filter(x => x.endsWith(".js"))
-			.map(x => x.split('\\').pop()?.split('/').pop() || x);
+			.map(x => x.split(/[/\\]+/).pop() || x);
 	}
 
 	readScriptFile(fileName: string): Promise<string> {
@@ -55,25 +59,26 @@ export default class ScriptsIO {
 
 	async #initializeTypesFile() {
 		const adapter = this.#plugin.app.vault.adapter;
-		const typeFilename = "simple-script-api.d.ts";
-		const sourcePath = this.#makePath(".obsidian\\plugins", this.#plugin.manifest.id, typeFilename);
-		const destinationPath = this.#makePath(this.#scriptsPath, "@types", typeFilename);
-		let copyFile = false;
+		const typesDirectory = this.#makePath(this.#scriptsPath, "@types");
+		let shouldWriteFile = true;
 
-		if (await adapter.exists(destinationPath)) {
-			const source = await adapter.stat(sourcePath);
-			const destination = await adapter.stat(destinationPath);
+		const directoryListings = await adapter.list(typesDirectory);
+		for (const path of directoryListings.files) {
+			const filename = path.split(/[/\\]+/).pop()
+			if(filename?.startsWith("simple-script-api-")){
+				const fileVersion = filename.substring(18).split(".").slice(0,3).join(".");
 
-			copyFile = (source?.mtime ?? 0) > (destination?.mtime ?? 0);
-			if (copyFile) {
-				await adapter.remove(destinationPath);
+				if(fileVersion === this.#plugin.manifest.version){
+					shouldWriteFile = false;
+				}else{
+					adapter.remove(path);
+				}
 			}
-		} else {
-			copyFile = true;
 		}
 
-		if (copyFile) {
-			adapter.copy(sourcePath, destinationPath);
+		if(shouldWriteFile){
+			const typeFilename = `simple-script-api-${this.#plugin.manifest.version}.d.ts`;
+			adapter.write(this.#makePath(typesDirectory, typeFilename),simpleScriptApiTypes);
 		}
 	}
 
