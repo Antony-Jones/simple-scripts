@@ -1,6 +1,6 @@
 {
 	"name": "simple-scripts",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Expand Obsidian with custom JS without needing to develop a custom plugin.",
 	"main": "main.js",
 	"scripts": {
