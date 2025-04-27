@@ -12,15 +12,17 @@ export default class SimpleScriptsPlugin extends Plugin {
 	constructor(app: App, manifest: PluginManifest) {
 		super(app, manifest);
 
-		this.#scriptsIO = new ScriptsIO(app);
+		this.#scriptsIO = new ScriptsIO(this);
 		this.#settings = new SettingsProvider(this);
-		this.#scriptManager = new ScriptManager(app, this, this.#scriptsIO, this.#settings);
+		this.#scriptManager = new ScriptManager(this, this.#scriptsIO, this.#settings);
 	}
 
 	async onload() {
+		console.log("onload")
+		await this.#scriptsIO.initializeScriptsPath();
 		await this.#settings.load();
 
-		this.addSettingTab(new SettingsTab(this.app, this, this.#settings, this.#scriptsIO, this.#scriptManager));
+		this.addSettingTab(new SettingsTab(this, this.#settings, this.#scriptsIO, this.#scriptManager));
 		this.#scriptManager.onLoad();
 	}
 

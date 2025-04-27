@@ -1,19 +1,17 @@
-import { App, CachedMetadata, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import { CachedMetadata, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import ScriptsIO from "./ScriptsIO";
 import ScriptList from "./ScriptList";
 import SettingsProvider from "Settings/SettingsProvider";
 
 export default class ScriptManager {
-    #app: App;
     #plugin: Plugin;
     #frontmatterHashCodes: Record<string, number> = {};
     #scripts: ScriptList;
     #settings: SettingsProvider;
 
-    constructor(app: App, plugin: Plugin, io: ScriptsIO, settings:SettingsProvider) {
-        this.#app = app as App;
+    constructor(plugin: Plugin, io: ScriptsIO, settings:SettingsProvider) {
         this.#plugin = plugin;
-        this.#scripts = new ScriptList(app, io, settings);
+        this.#scripts = new ScriptList(plugin.app, io, settings);
         this.#settings = settings;
     }
 
@@ -41,7 +39,7 @@ export default class ScriptManager {
     }
 
     #registerEvents() {
-        this.#plugin.registerEvent(this.#app.vault.on('create', (file: TAbstractFile) => {
+        this.#plugin.registerEvent(this.#plugin.app.vault.on('create', (file: TAbstractFile) => {
             if (file instanceof TFile) {
                 this.#scripts.onFileCreated(file);
             } else if (file instanceof TFolder) {
@@ -49,13 +47,13 @@ export default class ScriptManager {
             }
         }));
 
-        this.#plugin.registerEvent(this.#app.vault.on('modify', (file: TAbstractFile) => {
+        this.#plugin.registerEvent(this.#plugin.app.vault.on('modify', (file: TAbstractFile) => {
             if (file instanceof TFile) {
                 this.#scripts.onFileModified(file);
             }
         }));
 
-        this.#plugin.registerEvent(this.#app.vault.on('delete', (file: TAbstractFile) => {
+        this.#plugin.registerEvent(this.#plugin.app.vault.on('delete', (file: TAbstractFile) => {
             if (file instanceof TFile) {
                 this.#scripts.onFileDeleted(file);
             } else if (file instanceof TFolder) {
@@ -63,7 +61,7 @@ export default class ScriptManager {
             }
         }));
 
-        this.#plugin.registerEvent(this.#app.vault.on('rename', (file: TAbstractFile, oldPath: string) => {
+        this.#plugin.registerEvent(this.#plugin.app.vault.on('rename', (file: TAbstractFile, oldPath: string) => {
             if (file instanceof TFile) {
                 this.#scripts.onFileRenamed(file, oldPath);
             } else if (file instanceof TFolder) {
@@ -71,18 +69,18 @@ export default class ScriptManager {
             }
         }));
 
-        this.#plugin.registerEvent(this.#app.workspace.on('file-open', (file: TFile | null) => {
+        this.#plugin.registerEvent(this.#plugin.app.workspace.on('file-open', (file: TFile | null) => {
             this.#scripts.onFileOpened(file);
         }));
 
-        this.#plugin.registerEvent(this.#app.metadataCache.on('changed', (file: TFile, data: string, cache: CachedMetadata) => {
+        this.#plugin.registerEvent(this.#plugin.app.metadataCache.on('changed', (file: TFile, data: string, cache: CachedMetadata) => {
             if (cache.frontmatter) {
                 const cachedHashCode = this.#frontmatterHashCodes[file.path] ?? 0;
                 const newHashCode = this.#getFrontmatterHashCode(data, cache);
 
                 if (cachedHashCode != newHashCode) {
                     this.#frontmatterHashCodes[file.path] = newHashCode;
-                    this.#scripts.onFrontmatterModified(file, cache.frontmatter, this.#app.metadataTypeManager);
+                    this.#scripts.onFrontmatterModified(file, cache.frontmatter, this.#plugin.app.metadataTypeManager);
                 }
             }
         }));
@@ -91,7 +89,7 @@ export default class ScriptManager {
     async #initializeHashCodes() {
         const tasks = [];
 
-        for (const file of this.#app.vault.getFiles()) {
+        for (const file of this.#plugin.app.vault.getFiles()) {
             if (file instanceof TFile) {
                 tasks.push(this.#getFileFrontmatterHashCode(file).then(x => this.#frontmatterHashCodes[file.path] = x));
             }
@@ -101,8 +99,8 @@ export default class ScriptManager {
     }
 
     async #getFileFrontmatterHashCode(file: TFile): Promise<number> {
-        const cache = this.#app.metadataCache.getFileCache(file);
-        const data = await this.#app.vault.read(file);
+        const cache = this.#plugin.app.metadataCache.getFileCache(file);
+        const data = await this.#plugin.app.vault.read(file);
 
         return this.#getFrontmatterHashCode(data, cache);
     }

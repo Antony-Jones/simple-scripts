@@ -1,5 +1,5 @@
-import { App, Plugin, PluginSettingTab, Setting, sanitizeHTMLToDom } from 'obsidian';
-import * as childProcess from 'child_process';
+import { Platform, Plugin, PluginSettingTab, Setting, sanitizeHTMLToDom } from 'obsidian';
+
 import SettingsProvider from './SettingsProvider';
 import ScriptsIO from 'Scripts/ScriptsIO';
 import ScriptManager from 'Scripts/ScriptManager';
@@ -9,8 +9,8 @@ export default class SettingsTab extends PluginSettingTab {
 	#io:ScriptsIO;
 	#scriptManager: ScriptManager;
 
-	constructor(app: App, plugin: Plugin, settings: SettingsProvider, io: ScriptsIO, scriptManager:ScriptManager) {
-		super(app, plugin);
+	constructor(plugin: Plugin, settings: SettingsProvider, io: ScriptsIO, scriptManager:ScriptManager) {
+		super(plugin.app, plugin);
 
 		this.#settings = settings;
 		this.#io = io;
@@ -105,8 +105,13 @@ export default class SettingsTab extends PluginSettingTab {
 				btn.setIcon("folder-open")
 				btn.setTooltip("Open scripts folder")
 				btn.onClick(async () => {
-					childProcess.exec((`start "" "${this.#io.ScriptsPath}"`))
+					// use require to get child_process instead of import as this module is only avilable on desktop.
+					// eslint-disable-next-line @typescript-eslint/no-var-requires
+					require("child_process").exec((`start "" "${this.#io.ScriptsFullPath}"`));
 				})
+				if(!Platform.isDesktop){
+					btn.disabled = true;
+				}
 			});
 
 		const scriptsEl: HTMLElement = containerEl.createDiv();
