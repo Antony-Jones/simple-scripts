@@ -13,10 +13,6 @@ type IconizePlugin = {
 	removeFolderIcon(path: string): void;
 	getIconNameFromPath(path: string): string | undefined;
 }
-// interface SetIconForNodeOptions {
-// 	color?: string;
-// 	shouldApplyAllStyles?: boolean;
-// }
 interface CreateOptions {
 	container?: HTMLElement;
 	color?: string;
@@ -25,56 +21,14 @@ interface RemoveOptions {
 	container?: HTMLElement;
 }
 type dom = {
-	// setIconForNode(plugin: IconizePlugin, iconName: string, node: HTMLElement, options?: SetIconForNodeOptions): void;
 	createIconNode(plugin: IconizePlugin, path: string, iconName: string, options?: CreateOptions,): void;
-	// doesElementHasIconNode(element: HTMLElement): boolean;
-	// getIconFromElement(element: HTMLElement): string | undefined;
-	// getIconNodeFromPath(path: string): HTMLElement | undefined;
-	//removeIconInNode(el: HTMLElement): void;
 	removeIconInPath(path: string, options?: RemoveOptions): void;
 }
-// type svg = {
-// 	extract(svgString: string): string;
-// 	colorize(svgString: string, fontSize: number): string;
-// 	setFontSizecolorize(svgString: string, color: string | undefined | null): string;
-// };
-// interface Icon {
-// 	name: string;
-// 	prefix: string;
-// 	displayName: string;
-// 	iconPackName: string | null;
-// 	filename: string;
-// 	svgContent: string;
-// 	svgViewbox: string;
-// 	svgElement: string;
-// }
-// type IconPack = {
-// 	delete(): Promise<void>;
-// 	addIcon(iconName: string, iconContent: string): Icon | undefined;
-// 	removeIcon(path: string, iconName: string): Promise<void>;
-// 	getIcon(iconName: string): Icon | undefined;
-// 	setIcons(icons: Icon[]): void;
-// 	getName(): string;
-// 	getPrefix(): string;
-// 	getIcons(): Icon[];
-// }
 interface IconizeAPI {
-	// getIconByName(iconNameWithPrefix: string): Icon | null;
-	// setIconForNode(iconName: string, node: HTMLElement, color?: string): void;
-	// doesElementHasIconNode: dom["doesElementHasIconNode"];
-	// getIconFromElement: dom["getIconFromElement"];
-	// removeIconInNode: dom["removeIconInNode"];
-	// removeIconInPath: dom["removeIconInPath"];
 	saveIconToIconPack(iconNameWithPrefix: string): void;
-	// removeIconFromIconPack(iconNameWithPrefix: string): void;
-	// getIconPacks(): IconPack[];
 	util: {
 		dom: dom;
-		// svg: svg;
 	};
-	// version: {
-	// 	current: string;
-	// };
 }
 
 export function getConnector(app: App): IconizeConnector | undefined {

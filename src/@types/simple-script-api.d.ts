@@ -75,6 +75,10 @@ declare module "simple-script" {
 		createFolder(path: string): Promise<FolderInfo>;
 		getFrontmatter(path: string): Promise<FrontmatterInfo | null>;
 		getFrontmatter(file: FileInfo): Promise<FrontmatterInfo | null>;
+
+		addCommand(name:string, callback:()=>void):void;
+		addCommand(name:string, callback:()=>void, performCheck:false):void;
+		addCommand(name:string, callback:(checking:boolean)=>void, performCheck:true):void;
 	}
 
 	// ----------------------------------- //

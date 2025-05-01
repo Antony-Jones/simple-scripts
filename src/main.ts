@@ -1,4 +1,4 @@
-import { App, Plugin, PluginManifest } from 'obsidian';
+import { App, Notice, Plugin, PluginManifest, sanitizeHTMLToDom } from 'obsidian';
 import SettingsProvider from 'Settings/SettingsProvider';
 import SettingsTab from 'Settings/SettingsTab';
 import ScriptsIO from 'Scripts/ScriptsIO'
@@ -18,7 +18,6 @@ export default class SimpleScriptsPlugin extends Plugin {
 	}
 
 	async onload() {
-		console.log("onload")
 		await this.#scriptsIO.initializeScriptsPath();
 		await this.#settings.load();
 
@@ -29,5 +28,33 @@ export default class SimpleScriptsPlugin extends Plugin {
 	onUnload() {
 		this.#scriptManager.onUnload();
 	}
+
+	displayErrorNotice(subheader: string, filename: string, error: unknown): void {
+		let message:string;
+		if(error){
+			if(error instanceof Error){				
+				message = `[${error.name}] ${error.message}`;
+			}else if(error["toString"]){
+				message = error.toString();
+			}else{
+				message = `${error}`;
+			}
+		}else{
+			message = "";
+		}
+
+		console.error(`Simple Script Error:\n\${subheader}\n\tFilename:${filename}\n\tMessage:${message}`);
+		console.error(error);
+
+		const html = `<div class="simple-script-notice">
+			<div class="simple-script-notice-header">Simple Script Error</div>
+			<div class="simple-script-notice-subheader">${subheader}</div>
+			<div class="simple-script-notice-filename">${filename}</div>
+			<div class="simple-script-notice-message">${message}</div>
+		</div>`;
+
+		const fragment = sanitizeHTMLToDom(html);
+		new Notice(fragment);
+		}
 }
 

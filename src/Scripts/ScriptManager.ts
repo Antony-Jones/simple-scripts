@@ -1,17 +1,18 @@
-import { CachedMetadata, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import { CachedMetadata,  TAbstractFile, TFile, TFolder } from "obsidian";
 import ScriptsIO from "./ScriptsIO";
 import ScriptList from "./ScriptList";
 import SettingsProvider from "Settings/SettingsProvider";
+import SimpleScriptsPlugin from "main";
 
 export default class ScriptManager {
-    #plugin: Plugin;
+    #plugin: SimpleScriptsPlugin;
     #frontmatterHashCodes: Record<string, number> = {};
     #scripts: ScriptList;
     #settings: SettingsProvider;
 
-    constructor(plugin: Plugin, io: ScriptsIO, settings:SettingsProvider) {
+    constructor(plugin: SimpleScriptsPlugin, io: ScriptsIO, settings:SettingsProvider) {
         this.#plugin = plugin;
-        this.#scripts = new ScriptList(plugin.app, io, settings);
+        this.#scripts = new ScriptList(plugin, io);
         this.#settings = settings;
     }
 

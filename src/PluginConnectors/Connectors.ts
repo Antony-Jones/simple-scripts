@@ -29,10 +29,3 @@ export default class Connectors{
 		throw `No plugin was found with the id '${pluginId}'.`;
 	}
 }
-
-
-export interface Connectors__ {
-    keys(): Generator<string>;
-    contains(pluginId:string):boolean;
-    get(pluginId:string):never;
-}

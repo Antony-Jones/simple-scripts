@@ -48,7 +48,6 @@ export default class ScriptsIO {
 	}
 
 	async initializeScriptsPath() {
-		console.log("initializeScriptsPath")
 		this.#ensureDirectoryExists(this.#makePath(this.#scriptsPath));
 
 		const typePath = this.#makePath(this.#scriptsPath, "@types");
@@ -83,7 +82,6 @@ export default class ScriptsIO {
 	}
 
 	async #ensureDirectoryExists(directoryPath: string) {
-		console.log(`ensureDirectoryExists: ${directoryPath}`)
 		if (!(await this.#plugin.app.vault.adapter.exists(directoryPath))) {
 			this.#plugin.app.vault.adapter.mkdir(directoryPath);
 		}
